@@ -19,25 +19,37 @@ function runJS() {
   };
   const code = Blockly.JavaScript.workspaceToCode(workspace);
   Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+  console.group('eval');
   try {
-    // eval(code);
+    eval(code);
   } catch (e) {
-    alert(`Program error:\n${e}`);
+    console.error(e);
+    document.getElementById('output').textContent = `Program error:\n${e}\n\nCode:\n${code}`;
+  } finally {
+    console.groupEnd();
   }
-  return code;
+
+  // // put the code into the DOM where it'll execute. ()
+  // const container = document.getElementById('code-container');
+  // container.innerHTML = '';
+  // const s = document.createElement('script');
+  // s.type = 'module';
+  // try {
+  //   s.appendChild(document.createTextNode(code));
+  //   document.body.appendChild(s);
+  // } catch (e) {
+  //   s.text = code;
+  //   document.body.appendChild(s);
+  // }
 };
-
-
-function onchange(event) {
-  document.getElementById('capacity').textContent =
-      workspace.remainingCapacity();
-
-  document.getElementById('output').textContent = runJS();;
-}
-workspace.addChangeListener(onchange);
-onchange();
-
 
 // Hook a save function onto unload.
 BlocklyStorage.backupOnUnload(workspace);
 BlocklyStorage.restoreBlocks(workspace);
+
+function onchange(event) {
+  document.getElementById('capacity').textContent = workspace.remainingCapacity();
+  runJS();
+}
+setTimeout(() => { workspace.addChangeListener(onchange); }, 0)
+onchange();
