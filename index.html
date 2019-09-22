@@ -1,27 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
-    <title>Highlight dropzones with interact.js</title>
-    <script src="third_party/interact.js-1.6.2/interact.js"></script>
-    <script src="js/dragdrop.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-    <link rel="stylesheet" href="css/dragdrop.css">
+  <meta charset="utf-8">
+  <title>Blockly Demo: Maximum Block Limit</title>
+  <script src="third_party/google-blockly-4efa0da/blockly_compressed.js"></script>
+  <script src="third_party/google-blockly-4efa0da/blocks_compressed.js"></script>
+  <script src="third_party/google-blockly-4efa0da/javascript_compressed.js"></script>
+  <script src="third_party/google-blockly-4efa0da/msg/js/en.js"></script>
+  <script src="third_party/google-blockly-4efa0da/appengine/storage.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+
 </head>
 <body>
+  <h1><a href="https://developers.google.com/blockly/">Blockly</a> &gt;
+    <a href="../index.html">Demos</a> &gt; Maximum Block Limit</h1>
 
-<div class="drag-drop"> .drag-drop </div>
-<div class="drag-drop"> .drag-drop </div>
+  <p>This is a demo of Blockly which has been restricted to a maximum of
+  five blocks.</p>
 
-<div class="outer-dropzone dropzone drag-drop">
-  .outer-dropzone
-  <div class="inner-dropzone dropzone drag-drop">.inner-dropzone</div>
-</div>
+  <p><b>You have <span id="capacity"></span> block(s) left.</b></p>
 
-<div class="outer-dropzone dropzone">
-  .outer-dropzone
-  <div class="inner-dropzone dropzone">.inner-dropzone</div>
-</div>
+  <div id="horizontal-main">
+    <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+    <div id="output">Hello I am output.</div>
+  </div>
+
+  <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+<!--     <category name="Logic" colour="%{BKY_LOGIC_HUE}">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+    </category>
+    <category name="Loops" colour="%{BKY_LOOPS_HUE}">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <field name="VAR">i</field>
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="BY">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <category name="Math" colour="%{BKY_MATH_HUE}">
+      <block type="math_number">
+        <field name="NUM">123</field>
+      </block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+    </category> -->
+    <category name="Text" colour="%{BKY_TEXTS_HUE}">
+      <block type="text"></block>
+      <block type="text_length"></block>
+      <block type="text_print"></block>
+    </category>
+  </xml>
+
+  <script type="module" src="js/main.js"></script>
 
 </body>
 </html>
