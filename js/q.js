@@ -17,16 +17,16 @@ export function makeInitialState(num_input_bits, num_working_bits) {
 
 
 const outcomeFontMap = {
-    '0': '𝟘',
-    '1': '𝟙',
-    '2': '𝟚',
-    '3': '𝟛',
-    '4': '𝟜',
-    '5': '𝟝',
-    '6': '𝟞',
-    '7': '𝟟',
-    '8': '𝟠',
-    '9': '𝟡',
+    '0': '𝟬',
+    '1': '𝟭',
+    '2': '𝟮',
+    '3': '𝟯',
+    '4': '𝟰',
+    '5': '𝟱',
+    '6': '𝟲',
+    '7': '𝟳',
+    '8': '𝟴',
+    '9': '𝟵',
 };
 function toOutcomeFont(str) {
     return [...str].map(c => outcomeFontMap[c] || c).join('');
@@ -56,38 +56,79 @@ function getColor(i) {
 export function debugState(amplitudes, outputElement) {
     const labels = labelOutcomes(amplitudes);
     const probabilities = amplitudes.map(amplitudeToProbability);
-    const table = `
-    <table>
-        <tr>
-            <td>outcome</td>
-            ${labels.map(label => `<td>${label}</td>`).join(' ')}
-        </tr>
-        <tr>
-            <td>amplitudes</td>
-            ${amplitudes.map(amp => `<td>${amp.toFixed(3)}</td>`).join(' ')}
-        </tr>
-        <tr>
-            <td>probabilities</td>
-            ${probabilities.map(prob => `<td>${prob.toFixed(3)}</td>`).join(' ')}
-        </tr>
-    </table>
-    `;
+    // const table = `
+    // <table>
+    //     <tr>
+    //         <td>outcome</td>
+    //         ${labels.map(label => `<td>${label}</td>`).join(' ')}
+    //     </tr>
+    //     <tr>
+    //         <td>amplitudes</td>
+    //         ${amplitudes.map(amp => `<td>${amp.toFixed(3)}</td>`).join(' ')}
+    //     </tr>
+    //     <tr>
+    //         <td>probabilities</td>
+    //         ${probabilities.map(prob => `<td>${prob.toFixed(3)}</td>`).join(' ')}
+    //     </tr>
+    // </table>
+    // `;
 
-    const distribution = `
-    <div style="width:100%">
-        <div>Outcome probability distribution:</div>
-        ${probabilities
-            .map((prob, i) => ({prob, label: labels[i]}))
-            .filter(({prob, label}) => prob > 0)
-            .map(({prob, label}, i) => `
-                <span style="width:${prob*100}%; background-color: ${getColor(i)}; display: inline-block; margin: 0; text-align: center;">
-                    ${label}
-                </span>
-                `.trim())
-            .join('')
-        }
-    </div>
-    `;
+const width = 500;
+const height = 300;
+const color = d3.scaleOrdinal(d3.schemeCategory10);
+const data = {
+    name: '',
+    children: probabilities
+            .map((prob, i) => ({value: prob, name: labels[i]}))
+            .filter(({value, name}) => value > 0)
+};
 
-    outputElement.innerHTML += table + distribution;
+const treemap = data => d3.treemap()
+    .tile(d3.treemapBinary)
+    .size([width, height])
+    .padding(1)
+    .round(true)
+  (d3.hierarchy(data)
+    .count()
+    .sort((a, b) => b.value - a.value))
+
+function chart() {
+  const root = treemap(data);
+
+  const svg = d3.select(outputElement).append("svg")
+      .attr("viewBox", [0, 0, width, height])
+      .style("font", "10px sans-serif");
+
+  const leaf = svg.selectAll("g")
+    .data(root.leaves())
+    .join("g")
+      .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+  leaf.append("title")
+      .text(d => `${d.ancestors().reverse().map(d => d.data.name).join("/")}`);
+
+  leaf.append("rect")
+      .attr("id", d => (d.leafUid = "leaf").id)
+      .attr("fill", d => { while (d.depth > 1) d = d.parent; return color(d.data.name); })
+      .attr("fill-opacity", 0.6)
+      .attr("width", d => d.x1 - d.x0)
+      .attr("height", d => d.y1 - d.y0);
+
+  leaf.append("clipPath")
+      .attr("id", d => (d.clipUid = "clip").id)
+    .append("use")
+      .attr("xlink:href", d => d.leafUid.href);
+
+  leaf.append("text")
+    .text(d => d.data.name)
+    .style("font-size", function(d) { return Math.min((d.x1 - d.x0), ((d.x1 - d.x0) * .9) / this.getComputedTextLength() * 10) + "px"; })
+    .attr("x", d => (d.x1 - d.x0)/2)
+    .attr("y", d => (d.y1 - d.y0)/2)
+    .attr("dy", d => '0.35em')
+    .style("text-anchor", "middle")
+
+  return svg.node();
+};
+chart()
+
 }
