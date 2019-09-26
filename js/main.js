@@ -4,7 +4,6 @@ import {makeInitialState, debugState} from './q.js'
 
 const workspace = Blockly.inject('blocklyDiv', {
   media: '/third_party/google-blockly-4efa0da/media/',
-  maxBlocks: 5,
   toolbox: document.getElementById('toolbox')
 });
 
@@ -54,7 +53,6 @@ function onchange(event) {
     return;
   }
   console.log(event && event.type || 'no event type')
-  document.getElementById('capacity').textContent = workspace.remainingCapacity();
   runJS();
 }
 setTimeout(() => { workspace.addChangeListener(onchange); }, 0)
