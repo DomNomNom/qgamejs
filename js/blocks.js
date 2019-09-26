@@ -1,5 +1,6 @@
 // Copyright (c) 2019 DomNomNom
 
+
 Blockly.Blocks['quantum_start'] = {
   init: function() {
     this.appendDummyInput()
@@ -18,15 +19,15 @@ Blockly.JavaScript['quantum_start'] = function(block) {
   var number_num_input_bits = block.getFieldValue('num_input_bits');
   var number_num_working_bits = block.getFieldValue('num_working_bits');
   // TODO: Assemble JavaScript into code variable.
-  var code = ';\n';
+  var code = `let state = makeInitialState(${number_num_input_bits}, ${number_num_working_bits});\n`;
   return code;
 };
 
 
-Blockly.Blocks['debug_distribution'] = {
+Blockly.Blocks['debug_state'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("debug_distribution");
+        .appendField("debug_state");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);
@@ -34,8 +35,8 @@ Blockly.Blocks['debug_distribution'] = {
  this.setHelpUrl("");
   }
 };
-Blockly.JavaScript['debug_distribution'] = function(block) {
+Blockly.JavaScript['debug_state'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
-  var code = ';\n';
+  var code = 'debugState(state, outputElement);\n';
   return code;
 };

@@ -13,6 +13,9 @@ a:visited { color: #3f6f98; }
 #horizontal-main > * {
     margin-right: 10px;
 }
+#output{
+    flex-grow: 1;
+}
 
 
 /* Blockly related things */

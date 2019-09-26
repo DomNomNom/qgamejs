@@ -2,12 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Blockly Demo: Maximum Block Limit</title>
+  <title>Dom's ComQter</title>
   <script src="third_party/google-blockly-4efa0da/blockly_compressed.js"></script>
   <script src="third_party/google-blockly-4efa0da/blocks_compressed.js"></script>
   <script src="third_party/google-blockly-4efa0da/javascript_compressed.js"></script>
   <script src="third_party/google-blockly-4efa0da/msg/js/en.js"></script>
   <script src="third_party/google-blockly-4efa0da/appengine/storage.js"></script>
+  <script src="third_party/mathjs/math.js"></script>
+  <!-- <script src="third_party/d3.v5/d3.v5.min.js"></script> -->
 
   <link rel="stylesheet" type="text/css" href="css/main.css">
 
@@ -27,58 +29,10 @@
   </div>
 
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
-<!--     <category name="Logic" colour="%{BKY_LOGIC_HUE}">
-      <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_negate"></block>
-      <block type="logic_boolean"></block>
-    </category>
-    <category name="Loops" colour="%{BKY_LOOPS_HUE}">
-      <block type="controls_repeat_ext">
-        <value name="TIMES">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-      </block>
-      <block type="controls_whileUntil"></block>
-      <block type="controls_for">
-        <field name="VAR">i</field>
-        <value name="FROM">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-        <value name="TO">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-        <value name="BY">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-      </block>
-    </category>
-    <category name="Math" colour="%{BKY_MATH_HUE}">
-      <block type="math_number">
-        <field name="NUM">123</field>
-      </block>
-      <block type="math_arithmetic"></block>
-      <block type="math_single"></block>
-    </category>
-    <category name="Text" colour="%{BKY_TEXTS_HUE}">
-      <block type="text"></block>
-      <block type="text_length"></block>
-      <block type="text_print"></block>
-    </category>
-  -->
 
 
     <block type="quantum_start"></block>
-    <block type="debug_distribution"></block>
+    <block type="debug_state"></block>
   </xml>
 
   <script type="module" src="js/blocks.js"></script>
