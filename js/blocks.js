@@ -23,6 +23,30 @@ Blockly.JavaScript['quantum_start'] = function(block) {
   return code;
 };
 
+Blockly.Blocks['swap_bits'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Swap bits by index");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldNumber(0, 0), "bit1");
+    this.appendDummyInput()
+        .appendField("⇔")
+        .appendField(new Blockly.FieldNumber(1, 0), "bit2");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};Blockly.JavaScript['swap_bits'] = function(block) {
+  var number_bit1 = block.getFieldValue('bit1');
+  var number_bit2 = block.getFieldValue('bit2');
+  // TODO: Assemble JavaScript into code variable.
+  var code = `state = swapBits(state, ${number_bit1}, ${number_bit2})\n`;
+  return code;
+};
+
 
 Blockly.Blocks['debug_state'] = {
   init: function() {

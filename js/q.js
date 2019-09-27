@@ -18,6 +18,30 @@ export function makeInitialState(num_input_bits, num_working_bits) {
     return state
 }
 
+export function swapBits(amplitudes, bit1, bit2) {
+  if (amplitudes.length == 0) return [];
+  const numBits = math.log2(amplitudes.length);
+  if (bit1 >= numBits || bit2 >= numBits) {
+    console.warn(`Was asked to switchBits(${bit1}, ${bit2}) but numBits=${numBits}. Doing switchBits(${bit1%numBits}, ${bit2%numBits}) instead.`)
+    bit1 = bit1 % numBits;
+    bit2 = bit2 % numBits;
+  }
+  return amplitudes.map((_, i) => {
+    const bitmask1 = 1 << bit1;
+    const bitmask2 = 1 << bit2;
+    const j = (i & ~(bitmask1 | bitmask2)) |
+      (((i >>> bit1) & 1) << bit2) |
+      (((i >>> bit2) & 1) << bit1);
+    return amplitudes[j];
+  })
+}
+
+function amplitudeToProbability(amplitude) {
+    return math.abs(amplitude) * math.abs(amplitude);
+}
+
+
+
 
 const outcomeFontMap = {
     '0': '𝟬',
@@ -39,10 +63,6 @@ function labelOutcomes(amplitudes) {
     return amplitudes.map((_, i) => toOutcomeFont(i.toString(2).padStart(numBits, '0')));
 }
 
-function amplitudeToProbability(amplitude) {
-    return math.abs(amplitude) * math.abs(amplitude);
-}
-
 const visualizationPallete = [
     // https://learnui.design/tools/data-color-picker.html
     '#003f5c',
@@ -59,22 +79,6 @@ function getColor(i) {
 export function debugState(amplitudes, outputElement) {
     const labels = labelOutcomes(amplitudes);
     const probabilities = amplitudes.map(amplitudeToProbability);
-    // const table = `
-    // <table>
-    //     <tr>
-    //         <td>outcome</td>
-    //         ${labels.map(label => `<td>${label}</td>`).join(' ')}
-    //     </tr>
-    //     <tr>
-    //         <td>amplitudes</td>
-    //         ${amplitudes.map(amp => `<td>${amp.toFixed(3)}</td>`).join(' ')}
-    //     </tr>
-    //     <tr>
-    //         <td>probabilities</td>
-    //         ${probabilities.map(prob => `<td>${prob.toFixed(3)}</td>`).join(' ')}
-    //     </tr>
-    // </table>
-    // `;
     const out = d3.select(outputElement);
     visualizeAmplitudes(labels, amplitudes, out.append("svg"));
     visualizeOutcomeDistribution(labels, probabilities, out.append("svg"));
@@ -125,14 +129,13 @@ function visualizeAmplitudes(labels, amplitudes, svg) {
 
   const scaleX = 6.5/math.log2(amplitudes.length+1);
   const scaleY = Math.min(5, 45/amplitudes.length);
-  console.log(data);
   g.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
       .selectAll("text")
         .style("text-anchor", "end")
-        .attr("dx", "-.5em")
+        .attr("dx", "-.25em")
         .attr("dy", "-.5em")
         .attr("transform", ` rotate(-60) scale(${scaleX} ${scaleY}) `)// translate(0 0) scale(${2*scale}, ${3*scale}) `);
   g.append("g")

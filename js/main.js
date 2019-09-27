@@ -1,6 +1,6 @@
 // Copyright (c) 2019 DomNomNom
 
-import {makeInitialState, debugState} from './q.js'
+import {makeInitialState, swapBits, debugState} from './q.js'
 
 const workspace = Blockly.inject('blocklyDiv', {
   media: '/third_party/google-blockly-4efa0da/media/',
@@ -22,6 +22,7 @@ function runJS() {
   outputElement.innerHTML = '';
   const context = {
     makeInitialState,
+    swapBits,
     debugState,
     outputElement,
   };
