@@ -18,7 +18,6 @@ Blockly.Blocks['quantum_start'] = {
 Blockly.JavaScript['quantum_start'] = function(block) {
   var number_num_input_bits = block.getFieldValue('num_input_bits');
   var number_num_working_bits = block.getFieldValue('num_working_bits');
-  // TODO: Assemble JavaScript into code variable.
   var code = `let state = makeInitialState(${number_num_input_bits}, ${number_num_working_bits});\n`;
   return code;
 };
@@ -39,11 +38,35 @@ Blockly.Blocks['swap_bits'] = {
  this.setTooltip("");
  this.setHelpUrl("");
   }
-};Blockly.JavaScript['swap_bits'] = function(block) {
+};
+Blockly.JavaScript['swap_bits'] = function(block) {
   var number_bit1 = block.getFieldValue('bit1');
   var number_bit2 = block.getFieldValue('bit2');
-  // TODO: Assemble JavaScript into code variable.
   var code = `state = swapBits(state, ${number_bit1}, ${number_bit2})\n`;
+  return code;
+};
+
+Blockly.Blocks['controlled_not'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("If bit ");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldNumber(0, 0), "controlBit");
+    this.appendDummyInput()
+        .appendField("is set, flip bit ")
+        .appendField(new Blockly.FieldNumber(1, 0), "controlledBit");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("This is called the controlled-NOT gate");
+ this.setHelpUrl("");
+  }
+};
+Blockly.JavaScript['controlled_not'] = function(block) {
+  var number_controlBit = block.getFieldValue('controlBit');
+  var number_controlledBit = block.getFieldValue('controlledBit');
+  var code = `state = controlledNot(state, ${number_controlBit}, ${number_controlledBit})\n`;
   return code;
 };
 
@@ -60,7 +83,6 @@ Blockly.Blocks['debug_state'] = {
   }
 };
 Blockly.JavaScript['debug_state'] = function(block) {
-  // TODO: Assemble JavaScript into code variable.
   var code = 'debugState(state, outputElement);\n';
   return code;
 };

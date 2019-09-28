@@ -1,46 +1,82 @@
 // Copyright (c) 2019 DomNomNom
 
 
+//
+// InitialState
+//
+
 export function makeInitialState(num_input_bits, num_working_bits) {
     const input_sidelength = math.pow(2, num_input_bits);
     const working_sidelength = math.pow(2, num_working_bits);
-    if (num_input_bits + num_working_bits > 10) throw 'too many bits to simulate.'
+    if (num_input_bits + num_working_bits > 10) throw new Error('too many bits to simulate.');
     const normalizer = 1/math.sqrt(input_sidelength);
-    const state = [];
-    const working_bitmask = (1 << num_working_bits) - 1;  // the least significant bits are deemed the working bits.
+    const amplitudes = [];
+    const working_bitmask = ((1 << num_working_bits) - 1) << num_input_bits;  // the least significant bits are deemed the working bits.
     for (let i=0; i<math.pow(2, num_input_bits + num_working_bits); ++i) {
         let amplitude = 0;
         if ((i & working_bitmask) === 0) {
             amplitude = normalizer;
         }
-        state.push(amplitude);
+        amplitudes.push(amplitude);
     }
-    return state
+    return assertNormalized(amplitudes);
 }
 
+
+//
+// Quantum Gates
+//
+
 export function swapBits(amplitudes, bit1, bit2) {
+  assertNormalized(amplitudes);
+
   if (amplitudes.length == 0) return [];
   const numBits = math.log2(amplitudes.length);
   if (bit1 >= numBits || bit2 >= numBits) {
-    console.warn(`Was asked to switchBits(${bit1}, ${bit2}) but numBits=${numBits}. Doing switchBits(${bit1%numBits}, ${bit2%numBits}) instead.`)
-    bit1 = bit1 % numBits;
-    bit2 = bit2 % numBits;
+    throw new Error(`Was asked to switchBits(${bit1}, ${bit2}) but numBits=${numBits}`);
   }
-  return amplitudes.map((_, i) => {
-    const bitmask1 = 1 << bit1;
-    const bitmask2 = 1 << bit2;
-    const j = (i & ~(bitmask1 | bitmask2)) |
+  const bitsToKeepMask = ~((1 << bit1) | (1 << bit2))
+  return assertNormalized(amplitudes.map((_, i) => {
+    const j = (i & bitsToKeepMask) |
       (((i >>> bit1) & 1) << bit2) |
       (((i >>> bit2) & 1) << bit1);
     return amplitudes[j];
-  })
+  }));
 }
+
+export function controlledNot(amplitudes, controlBit, controlledBit) {
+  assertNormalized(amplitudes);
+  const numBits = math.log2(amplitudes.length);
+  if (controlBit >= numBits || controlledBit >= numBits) {
+    throw new Error(`Was asked to do controlledNot(${controlBit}, ${controlledBit}) but numBits=${numBits}`);
+  }
+  return assertNormalized(amplitudes.map((_, i) => {
+    const shouldInvert = i & (1 << controlBit);
+    const j = shouldInvert? i ^ (1 << controlledBit) : i;
+    return amplitudes[j];
+  }));
+}
+
+//
+// Utility functions
+//
 
 function amplitudeToProbability(amplitude) {
     return math.abs(amplitude) * math.abs(amplitude);
 }
+function assertNormalized(amplitudes) {
+  const totalProbability = math.sum(amplitudes.map(amplitudeToProbability));
+  if (math.round(totalProbability, 10) != 1) {
+    throw new Error(`probabilities no longer sum to 1 but to ${totalProbability}`);
+  }
+  return amplitudes
+}
 
 
+
+//
+// Visualization
+//
 
 
 const outcomeFontMap = {
@@ -77,11 +113,13 @@ function getColor(i) {
 }
 
 export function debugState(amplitudes, outputElement) {
-    const labels = labelOutcomes(amplitudes);
-    const probabilities = amplitudes.map(amplitudeToProbability);
-    const out = d3.select(outputElement);
-    visualizeAmplitudes(labels, amplitudes, out.append("svg"));
-    visualizeOutcomeDistribution(labels, probabilities, out.append("svg"));
+  assertNormalized(amplitudes);
+
+  const labels = labelOutcomes(amplitudes);
+  const probabilities = amplitudes.map(amplitudeToProbability);
+  const out = d3.select(outputElement);
+  visualizeAmplitudes(labels, amplitudes, out.append("svg"));
+  visualizeOutcomeDistribution(labels, probabilities, out.append("svg"));
 }
 
 function visualizeAmplitudes(labels, amplitudes, svg) {

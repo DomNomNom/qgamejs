@@ -1,6 +1,11 @@
 // Copyright (c) 2019 DomNomNom
 
-import {makeInitialState, swapBits, debugState} from './q.js'
+import {
+  makeInitialState,
+  swapBits,
+  controlledNot,
+  debugState,
+} from './q.js'
 
 const workspace = Blockly.inject('blocklyDiv', {
   media: '/third_party/google-blockly-4efa0da/media/',
@@ -23,6 +28,7 @@ function runJS() {
   const context = {
     makeInitialState,
     swapBits,
+    controlledNot,
     debugState,
     outputElement,
   };
@@ -31,7 +37,6 @@ function runJS() {
   try {
     functionWithContext(...Object.values(context));
   } catch (e) {
-    console.error(e);
     outputElement.innerHTML = `
     Program error:\n
     <pre>${e}</pre>
@@ -39,6 +44,7 @@ function runJS() {
       Code:
       <pre>${code}</pre>
     </div>`;
+    throw e;
   } finally {
     console.groupEnd();
   }
@@ -53,7 +59,7 @@ function onchange(event) {
   if (event && new Set(['ui', 'create']).has(event.type)) {
     return;
   }
-  console.log(event && event.type || 'no event type')
+  // console.log(event && event.type || 'no event type')
   runJS();
 }
 setTimeout(() => { workspace.addChangeListener(onchange); }, 0)
