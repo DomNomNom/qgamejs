@@ -11,8 +11,8 @@ Blockly.Blocks['quantum_start'] = {
         .appendField(new Blockly.FieldNumber(1), "num_working_bits");
     this.setNextStatement(true, null);
     this.setColour(230);
- this.setTooltip("");
- this.setHelpUrl("");
+    this.setTooltip("");
+    this.setHelpUrl("");
   }
 };
 Blockly.JavaScript['quantum_start'] = function(block) {
@@ -35,8 +35,8 @@ Blockly.Blocks['swap_bits'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);
- this.setTooltip("");
- this.setHelpUrl("");
+    this.setTooltip("");
+    this.setHelpUrl("");
   }
 };
 Blockly.JavaScript['swap_bits'] = function(block) {
@@ -59,8 +59,8 @@ Blockly.Blocks['controlled_not'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);
- this.setTooltip("This is called the controlled-NOT gate");
- this.setHelpUrl("");
+    this.setTooltip("This is called the controlled-NOT gate");
+    this.setHelpUrl("");
   }
 };
 Blockly.JavaScript['controlled_not'] = function(block) {
@@ -70,6 +70,25 @@ Blockly.JavaScript['controlled_not'] = function(block) {
   return code;
 };
 
+Blockly.Blocks['hadamard'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Hadamard bit ");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldNumber(0, 0), "bit");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("");
+    this.setHelpUrl("");
+  }
+};
+Blockly.JavaScript['hadamard'] = function(block) {
+  var number_bit = block.getFieldValue('bit');
+  var code = `state = hadamard(state, ${number_bit})\n`;
+  return code;
+};
 
 Blockly.Blocks['debug_state'] = {
   init: function() {
@@ -78,8 +97,8 @@ Blockly.Blocks['debug_state'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);
- this.setTooltip("");
- this.setHelpUrl("");
+    this.setTooltip("");
+    this.setHelpUrl("");
   }
 };
 Blockly.JavaScript['debug_state'] = function(block) {

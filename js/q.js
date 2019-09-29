@@ -6,26 +6,53 @@
 //
 
 export function makeInitialState(num_input_bits, num_working_bits) {
-    const input_sidelength = math.pow(2, num_input_bits);
-    const working_sidelength = math.pow(2, num_working_bits);
-    if (num_input_bits + num_working_bits > 10) throw new Error('too many bits to simulate.');
-    const normalizer = 1/math.sqrt(input_sidelength);
-    const amplitudes = [];
-    const working_bitmask = ((1 << num_working_bits) - 1) << num_input_bits;  // the least significant bits are deemed the working bits.
-    for (let i=0; i<math.pow(2, num_input_bits + num_working_bits); ++i) {
-        let amplitude = 0;
-        if ((i & working_bitmask) === 0) {
-            amplitude = normalizer;
-        }
-        amplitudes.push(amplitude);
+  const input_sidelength = math.pow(2, num_input_bits);
+  const working_sidelength = math.pow(2, num_working_bits);
+  if (num_input_bits + num_working_bits > 10) throw new Error('too many bits to simulate.');
+  const normalizer = 1/math.sqrt(input_sidelength);
+  const amplitudes = [];
+  const working_bitmask = ((1 << num_working_bits) - 1) << num_input_bits;  // the least significant bits are deemed the working bits.
+  for (let i=0; i<math.pow(2, num_input_bits + num_working_bits); ++i) {
+    let amplitude = 0;
+    if ((i & working_bitmask) === 0) {
+      amplitude = normalizer;
     }
-    return assertNormalized(amplitudes);
+    amplitudes.push(amplitude);
+  }
+  return assertNormalized(amplitudes);
 }
 
 
 //
 // Quantum Gates
 //
+
+function fastWalshHadamart(amplitudes) {
+  // https://en.wikipedia.org/wiki/Fast_Walsh%E2%80%93Hadamard_transform
+  const a = [...amplitudes];
+  // In-place Fast Walsh-Hadamard Transform of array a
+  for (let h=1; h < a.length; h *= 2) {
+    for (let i = 0; i < a.length; i += h * 2) {
+      for (let j = i; j < i + h; ++j) {
+        const x = a[j];
+        const y = a[j+h];
+        a[j] = x + y;
+        a[j+h] = x - y;
+      }
+    }
+  }
+  const normalizer = 1/Math.sqrt(a.length);
+  return assertNormalized(a.map(x => x * normalizer));
+}
+
+export function hadamard(amplitudes, bit) {
+  if (bit == 0) {
+    return assertNormalized(fastWalshHadamart(amplitudes))
+  }
+  return assertNormalized(
+    swapBits(fastWalshHadamart(swapBits(amplitudes, bit, 0)), bit, 0)
+  );
+}
 
 export function swapBits(amplitudes, bit1, bit2) {
   assertNormalized(amplitudes);

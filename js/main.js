@@ -2,6 +2,7 @@
 
 import {
   makeInitialState,
+  hadamard,
   swapBits,
   controlledNot,
   debugState,
@@ -27,6 +28,7 @@ function runJS() {
   outputElement.innerHTML = '';
   const context = {
     makeInitialState,
+    hadamard,
     swapBits,
     controlledNot,
     debugState,
