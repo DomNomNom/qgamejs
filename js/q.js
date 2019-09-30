@@ -46,12 +46,20 @@ function fastWalshHadamart(amplitudes) {
 }
 
 export function hadamard(amplitudes, bit) {
-  if (bit == 0) {
-    return assertNormalized(fastWalshHadamart(amplitudes))
+  assertNormalized(amplitudes);
+  const numBits = math.log2(amplitudes.length);
+  if (bit >= numBits) {
+    throw new Error(`Was asked to apply a hadamard to bit ${bit}, but numBits=${numBits}`);
   }
-  return assertNormalized(
-    swapBits(fastWalshHadamart(swapBits(amplitudes, bit, 0)), bit, 0)
-  );
+  return assertNormalized(amplitudes.map((amplitude, i) => {
+    const isBitSet = i & (1<<bit);
+    const j = i ^ (1 << bit);
+    if (isBitSet) {
+      return math.SQRT1_2 * (amplitudes[j] - amplitude);
+    } else {
+      return math.SQRT1_2 * (amplitudes[j] + amplitude);
+    }
+  }));
 }
 
 export function swapBits(amplitudes, bit1, bit2) {
