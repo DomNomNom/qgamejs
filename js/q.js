@@ -84,6 +84,18 @@ export function controlledNot(amplitudes, controlBit, controlledBit) {
   }));
 }
 
+export function not(amplitudes, bit) {
+  // flips the specified bit
+  const numBits = math.log2(amplitudes.length);
+  if (bit >= numBits) {
+    throw new Error(`Was asked to flip bit ${bit}, but numBits=${numBits}`);
+  }
+  return assertNormalized(amplitudes.map((_, i) => {
+    const j = i ^ (1 << bit);
+    return amplitudes[j];
+  }));
+}
+
 //
 // Utility functions
 //

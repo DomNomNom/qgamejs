@@ -4,6 +4,7 @@ import {
   makeInitialState,
   hadamard,
   swapBits,
+  not,
   controlledNot,
   debugState,
 } from './q.js'
@@ -30,6 +31,7 @@ function runJS() {
     makeInitialState,
     hadamard,
     swapBits,
+    not,
     controlledNot,
     debugState,
     outputElement,

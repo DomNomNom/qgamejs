@@ -46,6 +46,25 @@ Blockly.JavaScript['swap_bits'] = function(block) {
   return code;
 };
 
+Blockly.Blocks['not'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Flip bit ")
+        .appendField(new Blockly.FieldNumber(1, 0), "bit");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("This is called the NOT gate");
+    this.setHelpUrl("");
+  }
+};
+Blockly.JavaScript['not'] = function(block) {
+  var number_bit = block.getFieldValue('bit');
+  var code = `state = not(state, ${number_bit})\n`;
+  return code;
+};
+
 Blockly.Blocks['controlled_not'] = {
   init: function() {
     this.appendDummyInput()
