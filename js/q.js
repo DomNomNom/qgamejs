@@ -241,6 +241,20 @@ function visualizeAmplitudes(labels, amplitudes, svg) {
       .attr("y", d => y(d.polar_r) )
       .attr("width", x.bandwidth())
       .attr("height", d => height - y(d.polar_r))
+
+  g.selectAll(".phase-indicator")
+    .data(data)
+    .enter().append("path")
+      .attr("class", "phase-indicator")
+      .attr("transform", d => `translate(${x(d.label) + .5 * x.bandwidth()} ${y(.5*d.polar_r)})`)
+      .attr("d", d3.arc()
+        .innerRadius(0)
+        .outerRadius(d => d.polar_r * .45*x.bandwidth())
+        .startAngle(d => d.polar_phi + .25 * math.tau + -.1)
+        .endAngle(d => d.polar_phi + .25 * math.tau + .1)
+      )
+      .attr("fill", 'steelblue')
+
 }
 
 function visualizeOutcomeDistribution(labels, probabilities, svg) {
