@@ -50,7 +50,7 @@ Blockly.Blocks['not'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Flip bit ")
-        .appendField(new Blockly.FieldNumber(1, 0), "bit");
+        .appendField(new Blockly.FieldNumber(0, 0), "bit");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -109,10 +109,31 @@ Blockly.JavaScript['hadamard'] = function(block) {
   return code;
 };
 
+Blockly.Blocks['phase_shift'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("If bit")
+        .appendField(new Blockly.FieldNumber(0, 0), "bit")
+        .appendField("is set, shift the phase by ")
+        .appendField(new Blockly.FieldAngle(45), "angle");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.JavaScript['phase_shift'] = function(block) {
+  var number_bit = block.getFieldValue('bit');
+  var angle_name = block.getFieldValue('angle');
+  var code = `state = phaseShift(state, ${number_bit}, ${angle_name});\n`;
+  return code;
+};
+
 Blockly.Blocks['debug_state'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("debug_state");
+        .appendField("Visualize state");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);

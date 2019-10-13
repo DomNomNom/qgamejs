@@ -6,6 +6,7 @@ import {
   swapBits,
   not,
   controlledNot,
+  phaseShift,
   debugState,
 } from './q.js'
 
@@ -37,6 +38,7 @@ function runJS() {
     swapBits,
     not,
     controlledNot,
+    phaseShift,
     debugState,
     outputElement,
   };

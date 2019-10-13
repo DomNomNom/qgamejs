@@ -55,9 +55,9 @@ export function hadamard(amplitudes, bit) {
     const isBitSet = i & (1<<bit);
     const j = i ^ (1 << bit);
     if (isBitSet) {
-      return math.SQRT1_2 * (amplitudes[j] - amplitude);
+      return math.multiply(math.SQRT1_2, math.subtract(amplitudes[j], amplitude));
     } else {
-      return math.SQRT1_2 * (amplitudes[j] + amplitude);
+      return math.multiply(math.SQRT1_2, math.add(amplitudes[j], amplitude));
     }
   }));
 }
@@ -101,6 +101,16 @@ export function not(amplitudes, bit) {
   return assertNormalized(amplitudes.map((_, i) => {
     const j = i ^ (1 << bit);
     return amplitudes[j];
+  }));
+}
+
+export function phaseShift(amplitudes, bit, shiftDegrees) {
+  const shiftRadians = shiftDegrees / 360. * math.tau;
+  return assertNormalized(amplitudes.map((amplitude, i) => {
+    const isBitSet = i & (1<<bit);
+    return isBitSet?
+        math.multiply(amplitude, math.complex({r:1, phi: shiftRadians}))
+        : amplitude;
   }));
 }
 
@@ -249,8 +259,8 @@ function visualizeAmplitudes(labels, amplitudes, svg) {
       .attr("d", d3.arc()
         .innerRadius(0)
         .outerRadius(d => d.polar_r * .45*x.bandwidth())
-        .startAngle(d => d.polar_phi + .25 * math.tau + -.1)
-        .endAngle(d => d.polar_phi + .25 * math.tau + .1)
+        .startAngle(d => -d.polar_phi + .25 * math.tau + -.1)
+        .endAngle(d => -d.polar_phi + .25 * math.tau + .1)
       )
       .attr("fill", 'steelblue')
 
@@ -290,7 +300,7 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
     svg
         .attr("viewBox", [0, 0, width, height])
         .style("font", "10px sans-serif");
-
+    console.log(data);
     const leaf = svg.selectAll("g")
       .data(root.leaves())
       .join("g")
@@ -312,14 +322,14 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
         .attr("xlink:href", d => d.leafUid.href);
     leaf.append("path")
         .attr("class", "phase-indicator")
-        .attr("transform", d => `translate(${(d.x1 - d.x0)/2} ${.1*(d.y1 - d.y0)})`)
+        .attr("transform", d => `translate(${(d.x1 - d.x0)/2} ${(d.y1 - d.y0)/2})`)
         .attr("d", d3.arc()
           .innerRadius(0)
           .outerRadius(d => {  return math.sqrt(d.data.value) * .4* height})
-          .startAngle(d => d.data.polar_phi + .25 * math.tau + -.1)
-          .endAngle(d => d.data.polar_phi + .25 * math.tau + .1)
+          .startAngle(d => -d.data.polar_phi + .25 * math.tau + -.1)
+          .endAngle(d => -d.data.polar_phi + .25 * math.tau + .1)
         )
-        .attr("fill", '#114')
+        .attr("fill", 'steelblue')
 
     leaf.append("text")
       .text(d => d.data.name)
@@ -331,10 +341,7 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
       .attr("dy", d => '0.35em')
       .style("text-anchor", "middle")
 
-
-
     return svg.node();
   };
-  drawTreemap()
-
+  drawTreemap();
 }
