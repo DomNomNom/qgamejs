@@ -16,7 +16,10 @@ a:visited { color: #3f6f98; }
 #output{
     flex-grow: 1;
 }
+#output > svg {
+    max-height: 300px;
 
+}
 
 /* Blockly related things */
 #blocklyDiv {

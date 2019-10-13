@@ -114,7 +114,7 @@ Blockly.Blocks['phase_shift'] = {
     this.appendDummyInput()
         .appendField("If bit")
         .appendField(new Blockly.FieldNumber(0, 0), "bit")
-        .appendField("is set, shift the phase by ")
+        .appendField("is set, shift phase")
         .appendField(new Blockly.FieldAngle(45), "angle");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);

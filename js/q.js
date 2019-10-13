@@ -272,6 +272,10 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
   const width = 500;
   const height = 300;
   const color = d3.scaleOrdinal(d3.schemeCategory10);
+  for (const label of labels) {
+    color(label); // make colors consistent, no matter whether they're drawn or not.
+  }
+
   const data = {
       name: '',
       children: amplitudes
@@ -282,7 +286,7 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
                 // polar_r: math.abs(amplitude),
                 polar_phi: math.arg(amplitude),
               }))
-              .filter(({value, name}) => value > 0)
+              .filter(({value, name}) => value > 0.0001)
   };
 
   const treemap = data => d3.treemap()
@@ -299,7 +303,6 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
     svg
         .attr("viewBox", [0, 0, width, height])
         .style("font", "10px sans-serif");
-    console.log(data);
     const leaf = svg.selectAll("g")
       .data(root.leaves())
       .join("g")
@@ -324,7 +327,7 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
         .attr("transform", d => `translate(${(d.x1 - d.x0)/2} ${(d.y1 - d.y0)/2})`)
         .attr("d", d3.arc()
           .innerRadius(0)
-          .outerRadius(d => {  return math.sqrt(d.data.value) * .4* height})
+          .outerRadius(d => {  return math.sqrt(d.data.value) * .4* height; })
           .startAngle(d => -d.data.polar_phi + .25 * math.tau + -.1)
           .endAngle(d => -d.data.polar_phi + .25 * math.tau + .1)
         )
@@ -333,7 +336,7 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
     leaf.append("text")
       .text(d => d.data.name)
       .style("font-size", function(d) {
-        return Math.min((d.x1 - d.x0), ((d.x1 - d.x0) * .9) / this.getComputedTextLength() * 10) + "px";
+        return Math.min((d.y1 - d.y0), ((d.x1 - d.x0) * .9) / this.getComputedTextLength() * 10) + "px";
       })
       .attr("x", d => (d.x1 - d.x0)/2)
       .attr("y", d => (d.y1 - d.y0)/2)
