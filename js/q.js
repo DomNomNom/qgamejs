@@ -290,9 +290,8 @@ function visualizeOutcomeDistribution(labels, amplitudes, svg) {
       .size([width, height])
       .padding(1)
       .round(true)
-    (d3.hierarchy(data)
-      .count()
-      .sort((a, b) => b.value - a.value))
+    (d3.hierarchy(data, d => d.children)
+      .sum(d => d.value))
 
   function drawTreemap() {
     const root = treemap(data);
