@@ -163,10 +163,9 @@ export function debugState(amplitudes, outputElement) {
   assertNormalized(amplitudes);
 
   const labels = labelOutcomes(amplitudes);
-  const probabilities = amplitudes.map(amplitudeToProbability);
   const out = d3.select(outputElement);
   visualizeAmplitudes(labels, amplitudes, out.append("svg"));
-  visualizeOutcomeDistribution(labels, probabilities, out.append("svg"));
+  visualizeOutcomeDistribution(labels, amplitudes, out.append("svg"));
 }
 
 function visualizeAmplitudes(labels, amplitudes, svg) {
@@ -257,14 +256,22 @@ function visualizeAmplitudes(labels, amplitudes, svg) {
 
 }
 
-function visualizeOutcomeDistribution(labels, probabilities, svg) {
+function visualizeOutcomeDistribution(labels, amplitudes, svg) {
+  const probabilities = amplitudes.map(amplitudeToProbability);
+
   const width = 500;
   const height = 300;
   const color = d3.scaleOrdinal(d3.schemeCategory10);
   const data = {
       name: '',
-      children: probabilities
-              .map((prob, i) => ({value: prob, name: labels[i]}))
+      children: amplitudes
+              .map((amplitude, i) => ({
+                value: amplitudeToProbability(amplitude),
+                name: labels[i],
+                amplitude,
+                // polar_r: math.abs(amplitude),
+                polar_phi: math.arg(amplitude),
+              }))
               .filter(({value, name}) => value > 0)
   };
 
@@ -303,6 +310,16 @@ function visualizeOutcomeDistribution(labels, probabilities, svg) {
         .attr("id", d => (d.clipUid = "clip").id)
       .append("use")
         .attr("xlink:href", d => d.leafUid.href);
+    leaf.append("path")
+        .attr("class", "phase-indicator")
+        .attr("transform", d => `translate(${(d.x1 - d.x0)/2} ${.1*(d.y1 - d.y0)})`)
+        .attr("d", d3.arc()
+          .innerRadius(0)
+          .outerRadius(d => {  return math.sqrt(d.data.value) * .4* height})
+          .startAngle(d => d.data.polar_phi + .25 * math.tau + -.1)
+          .endAngle(d => d.data.polar_phi + .25 * math.tau + .1)
+        )
+        .attr("fill", '#114')
 
     leaf.append("text")
       .text(d => d.data.name)
@@ -313,6 +330,8 @@ function visualizeOutcomeDistribution(labels, probabilities, svg) {
       .attr("y", d => (d.y1 - d.y0)/2)
       .attr("dy", d => '0.35em')
       .style("text-anchor", "middle")
+
+
 
     return svg.node();
   };

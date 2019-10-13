@@ -24,6 +24,10 @@ function runJS() {
     }
   };
   const code = Blockly.JavaScript.workspaceToCode(workspace);
+  if (!code.trim().startsWith("let state =")) {
+    console.log("Ignoring invalid code, most likely caused by a temporary dragging of blocks")
+    return;
+  }
   Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
   const outputElement = document.getElementById('output');
   outputElement.innerHTML = '';
